@@ -5,6 +5,20 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 const InputComponent = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState<Boolean | null>(null);
+
+  const email = document.getElementById('email-input') as HTMLInputElement;
+  // const form = document.getElementById('form');
+
+  const handleValidation = () => {
+    if (email?.validity.valid || input !== '') {
+      console.log('valid');
+      setIsValid(true);
+    } else {
+      console.log('invalid');
+      setIsValid(false);
+    }
+  };
 
   useEffect(() => {
     console.log('loading state: ', loading);
@@ -33,7 +47,7 @@ const InputComponent = () => {
   };
 
   const inputFocus = () => {
-    document.getElementById('email-input')?.focus();
+    email?.focus();
     document
       .getElementById('input-container')
       ?.classList.remove('border-black');
@@ -42,7 +56,12 @@ const InputComponent = () => {
 
   return (
     <form
-      className='bg-white rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0'
+      id='form'
+      className={
+        isValid || isValid === null
+          ? 'bg-white rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0'
+          : 'bg-black text-white rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0'
+      }
       onSubmit={handleSubmit}
     >
       <h1 className='text-[40px] leading-[48px] tracking-[-0.03em]'>
@@ -59,8 +78,10 @@ const InputComponent = () => {
       >
         <input
           id='email-input'
-          className='text-black rounded-full tracking-[-0.03em] focus:outline-none'
-          //text-2xl
+          onBlur={handleValidation}
+          placeholder='Email'
+          className='text-black text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] focus:outline-none'
+          //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
           onChange={(e) => handleInputChange(e)}
           type='email'
         />
@@ -68,7 +89,7 @@ const InputComponent = () => {
           className='text-white bg-black px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max'
           type='submit'
         >
-          sign up
+          {!loading ? 'sign up' : 'signing up'}
         </button>
       </div>
     </form>
