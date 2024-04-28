@@ -23,7 +23,7 @@ const InputComponent = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>Sign up to our newsletter</h1>
+      <h1 className='font-bold'>Sign up to our newsletter</h1>
       <p>
         Lorem ipsum dolor sit amet, consecte adipiscing elit praesent sodales
         purus magna, eget lacinia sapien hendrerit.
