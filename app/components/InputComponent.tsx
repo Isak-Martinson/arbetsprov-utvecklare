@@ -6,39 +6,42 @@ const InputComponent = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState<Boolean | null>(null);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
+    setIsDisabled(false);
+  };
 
   const handleValidation = () => {
     const regularExpressions = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!input || input.length === 0 || !regularExpressions.test(input)) {
       console.log('email is required');
       setIsValid(false);
+      return false;
     } else {
       setIsValid(true);
+      return true;
     }
-  };
-
-  useEffect(() => {
-    console.log('loading state: ', loading);
-  }, [loading]);
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     document.getElementById('email-input')?.blur();
     setLoading(true);
-    try {
-      const response = await fetch('/api/FetchEmail', {
-        method: 'POST',
-        body: JSON.stringify({ email: input }),
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-    } catch (error) {
-      console.error(error);
+    if (handleValidation() === true) {
+      try {
+        const response = await fetch('/api/FetchEmail', {
+          method: 'POST',
+          body: JSON.stringify({ email: input }),
+          headers: {
+            'content-type': 'application/json',
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+      setIsDisabled(true);
     }
     setLoading(false);
   };
@@ -86,6 +89,7 @@ const InputComponent = () => {
         <button
           className='text-white bg-black px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max'
           type='submit'
+          {...(isDisabled ? { disabled: true } : { disabled: false })}
         >
           {!loading ? 'sign up' : 'signing up'}
         </button>
