@@ -7,16 +7,13 @@ const InputComponent = () => {
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState<Boolean | null>(null);
 
-  const email = document.getElementById('email-input') as HTMLInputElement;
-  // const form = document.getElementById('form');
-
   const handleValidation = () => {
-    if (email?.validity.valid || input !== '') {
-      console.log('valid');
-      setIsValid(true);
-    } else {
-      console.log('invalid');
+    const regularExpressions = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!input || input.length === 0 || !regularExpressions.test(input)) {
+      console.log('email is required');
       setIsValid(false);
+    } else {
+      setIsValid(true);
     }
   };
 
@@ -47,6 +44,7 @@ const InputComponent = () => {
   };
 
   const inputFocus = () => {
+    const email = document.getElementById('email-input') as HTMLInputElement;
     email?.focus();
     document
       .getElementById('input-container')
