@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { API_URL } from '@/config';
 
 export const POST = async (request: Request) => {
   const data = await request.json();
 
-  const response = await fetch('https://simmalugnt.proxy.beeceptor.com/login', {
+  const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

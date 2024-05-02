@@ -1,8 +1,6 @@
 'use client';
-
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { emailRegex } from '@/config';
 
 const InputComponent = () => {
   const [input, setInput] = useState('');
