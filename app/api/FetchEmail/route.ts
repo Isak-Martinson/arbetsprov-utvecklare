@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 export const POST = async (request: Request) => {
-  fetch('https://simmalugnt.proxy.beeceptor.com/login');
   const data = await request.json();
 
   const response = await fetch('https://simmalugnt.proxy.beeceptor.com/login', {
@@ -15,5 +14,5 @@ export const POST = async (request: Request) => {
   const responseStatus = await response.json();
   console.log(data, responseStatus);
 
-  return new Response(responseStatus);
+  return new Response(JSON.stringify(responseStatus));
 };

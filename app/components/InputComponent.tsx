@@ -2,47 +2,56 @@
 
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const InputComponent = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isValid, setIsValid] = useState<Boolean | null>(null);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [formState, setFormState] = useState<'normal' | 'success' | 'error'>(
+    'normal'
+  );
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
-    setIsDisabled(false);
   };
 
-  const handleValidation = () => {
-    const regularExpressions = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!input || input.length === 0 || !regularExpressions.test(input)) {
-      console.log('email is required');
-      setIsValid(false);
-      return false;
-    } else {
-      setIsValid(true);
-      return true;
-    }
-  };
+  const valid = input && emailRegex.test(input);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     document.getElementById('email-input')?.blur();
     setLoading(true);
-    if (handleValidation() === true) {
+
+    if (!valid) {
+      console.log('not valid');
+      setFormState('error');
+      setLoading(false);
+      return;
+    }
+
+    if (valid) {
       try {
-        const response = await fetch('/api/FetchEmail', {
+        const response: any = await fetch('/api/FetchEmail', {
           method: 'POST',
           body: JSON.stringify({ email: input }),
           headers: {
             'content-type': 'application/json',
           },
         });
+        const data = await response.json();
+        console.log(data);
+        console.log(response.status);
+
+        if (response.ok) {
+          setFormState('success');
+        }
       } catch (error) {
-        console.error(error);
+        console.error('error posting data: ', error);
       }
       setIsDisabled(true);
     }
+
     setLoading(false);
   };
 
@@ -55,14 +64,24 @@ const InputComponent = () => {
     document.getElementById('input-container')?.classList.add('border-red-400');
   };
 
+  const conditionalFormClassNames = () => {
+    if (formState === 'success') {
+      return 'bg-green-500 text-green-700 transition-colors duration-500';
+    }
+
+    if (valid || input.length === 0) {
+      return 'bg-white transition-colors duration-500';
+    }
+
+    if (!valid) {
+      return 'bg-red-300 text-red-700 transition-colors duration-500';
+    }
+  };
+
   return (
     <form
       id='form'
-      className={
-        isValid || isValid === null
-          ? 'bg-white rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0'
-          : 'bg-black text-white rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0'
-      }
+      className={`rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0 ${conditionalFormClassNames()}`}
       onSubmit={handleSubmit}
     >
       <h1 className='text-[40px] leading-[48px] tracking-[-0.03em]'>
@@ -72,28 +91,36 @@ const InputComponent = () => {
         Lorem ipsum dolor sit amet, consecte adipiscing elit praesent sodales
         purus magna, eget lacinia sapien hendrerit.
       </p>
-      <div
-        id='input-container'
-        onClick={() => inputFocus()}
-        className='flex flex-row justify-between border-4 border-black border rounded-full'
-      >
-        <input
-          id='email-input'
-          onBlur={handleValidation}
-          placeholder='Email'
-          className='text-black text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] focus:outline-none'
-          //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
-          onChange={(e) => handleInputChange(e)}
-          type='email'
-        />
-        <button
-          className='text-white bg-black px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max'
-          type='submit'
-          {...(isDisabled ? { disabled: true } : { disabled: false })}
+      {formState === 'normal' || formState === 'error' ? (
+        <div
+          id='input-container'
+          onClick={() => inputFocus()}
+          className='flex flex-row justify-between border-4 border-black border rounded-full'
         >
-          {!loading ? 'sign up' : 'signing up'}
-        </button>
-      </div>
+          <input
+            id='email-input'
+            // onBlur={handleValidation}
+            placeholder='Email'
+            className='text-black text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] focus:outline-none'
+            //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
+            onChange={(e) => handleInputChange(e)}
+            type='email'
+          />
+          <button
+            className='text-white bg-black px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max'
+            type='submit'
+            {...(isDisabled ? { disabled: true } : { disabled: false })}
+          >
+            {!loading ? 'sign up' : 'signing up...'}
+          </button>
+        </div>
+      ) : (
+        <div>
+          <button className='text-white bg-green-700 px-4 py-3 rounded-full leading-6 tracking-[-0.03em] w-full'>
+            Thanks!
+          </button>
+        </div>
+      )}
     </form>
   );
 };
