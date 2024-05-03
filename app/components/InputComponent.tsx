@@ -14,12 +14,20 @@ const InputComponent = () => {
     setInput(event.target.value);
   };
 
-  const valid = input && emailRegex.test(input);
+  const valid = emailRegex.test(input);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     document.getElementById('email-input')?.blur();
     setLoading(true);
+
+    if (formState === 'success') {
+      setLoading(false);
+      setInput('');
+      setIsDisabled(false);
+      setFormState('normal');
+      return;
+    }
 
     if (!valid) {
       console.log('not valid');
@@ -56,28 +64,35 @@ const InputComponent = () => {
   const inputFocus = () => {
     const email = document.getElementById('email-input') as HTMLInputElement;
     email?.focus();
-    document
-      .getElementById('input-container')
-      ?.classList.remove('border-black');
-    document.getElementById('input-container')?.classList.add('border-red-400');
   };
 
   const conditionalFormClassNames = () => {
     if (formState === 'success') {
-      return 'bg-green-500 text-green-700 transition-colors duration-500';
+      return 'bg-green-secondary text-green-primary transition-colors duration-500';
     }
 
     if (valid || input.length === 0) {
-      return 'bg-white transition-colors duration-500';
+      return 'bg-secondary transition-colors duration-500';
     }
 
     if (!valid) {
-      return 'bg-red-300 text-red-700 transition-colors duration-500';
+      return 'bg-red-secondary text-red-primary transition-colors duration-500';
     }
   };
 
+  const conditionalButtonClassNames =
+    valid || input.length === 0
+      ? 'bg-primary text-secondary transition-colors duration-500'
+      : 'bg-red-primary text-red-secondary transition-colors duration-500';
+
+  const borderClassNames =
+    valid || input.length === 0
+      ? 'border-primary transition-colors duration-500'
+      : 'border-red-primary transition-colors duration-500';
+
   return (
     <form
+      noValidate
       id='form'
       className={`rounded-[40px] py-[72px] px-6 m-6 font-bold absolute bottom-0 ${conditionalFormClassNames()}`}
       onSubmit={handleSubmit}
@@ -93,28 +108,29 @@ const InputComponent = () => {
         <div
           id='input-container'
           onClick={() => inputFocus()}
-          className='flex flex-row justify-between border-4 border-black border rounded-full'
+          className={`flex flex-row justify-between border-4 rounded-full ${borderClassNames}`}
         >
           <input
             id='email-input'
             // onBlur={handleValidation}
             placeholder='Email'
-            className='text-black text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] focus:outline-none'
+            className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] ${conditionalFormClassNames()} focus:outline-none`}
             //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
             onChange={(e) => handleInputChange(e)}
             type='email'
+            autoComplete='off'
           />
           <button
-            className='text-white bg-black px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max'
+            className={`px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max ${conditionalButtonClassNames}`}
             type='submit'
             {...(isDisabled ? { disabled: true } : { disabled: false })}
           >
-            {!loading ? 'sign up' : 'signing up...'}
+            {!loading ? 'sign up' : `signing up`}
           </button>
         </div>
       ) : (
         <div>
-          <button className='text-white bg-green-700 px-4 py-3 rounded-full leading-6 tracking-[-0.03em] w-full'>
+          <button className='text-green-secondary bg-green-primary border-4 border-green-primary px-4 py-3 rounded-full leading-6 tracking-[-0.03em] w-full transition-colors duration-500'>
             Thanks!
           </button>
         </div>
