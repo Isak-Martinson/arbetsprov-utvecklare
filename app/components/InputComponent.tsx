@@ -109,6 +109,9 @@ const InputComponent = () => {
     if (formState === 'success') {
       return 'Thanks';
     }
+    if (formState === 'error') {
+      return 'invalid email';
+    }
     return 'sign up';
   };
 
