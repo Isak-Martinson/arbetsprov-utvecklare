@@ -112,7 +112,6 @@ const InputComponent = () => {
         >
           <input
             id='email-input'
-            // onBlur={handleValidation}
             placeholder='Email'
             className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] ${conditionalFormClassNames()} focus:outline-none`}
             //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
