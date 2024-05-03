@@ -10,6 +10,8 @@ const InputComponent = () => {
     'normal'
   );
 
+  const items = ['.', '.', '.'];
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
@@ -128,17 +130,30 @@ const InputComponent = () => {
           <input
             id='email-input'
             placeholder='Email'
-            className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[50%] ${conditionalFormClassNames()} focus:outline-none`}
+            className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-full ${conditionalFormClassNames()} focus:outline-none`}
             onChange={(e) => handleInputChange(e)}
             type='email'
             autoComplete='off'
           />
           <button
-            className={`px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] w-max ${conditionalButtonClassNames}`}
+            className={`px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] whitespace-nowrap ${conditionalButtonClassNames}`}
             type='submit'
             {...(isDisabled ? { disabled: true } : { disabled: false })}
           >
-            {buttonText()}
+            <span className='flex flex-row'>
+              {buttonText()}
+              {loading
+                ? items.map((dot, index) => (
+                    <span
+                      id={`animate-${index}`}
+                      className={'test'}
+                      key={index}
+                    >
+                      {dot}
+                    </span>
+                  ))
+                : null}
+            </span>
           </button>
         </div>
       ) : (

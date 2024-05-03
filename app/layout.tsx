@@ -25,7 +25,6 @@ export const metadata: Metadata = {
     apple: ['/assets/icons/apple-touch-icon.png'],
     shortcut: ['assets/icons/apple-touch-icon.png'],
   },
-  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
