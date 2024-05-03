@@ -9,14 +9,15 @@ const InputComponent = () => {
   const [formState, setFormState] = useState<'normal' | 'success' | 'error'>(
     'normal'
   );
-
   const items = ['.', '.', '.'];
+  const valid = emailRegex.test(input);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
+    if (valid) {
+      setFormState('normal');
+    }
   };
-
-  const valid = emailRegex.test(input);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,35 +77,39 @@ const InputComponent = () => {
       return 'bg-green-secondary text-green-primary transition-colors duration-500';
     }
 
-    if (valid || input.length === 0) {
-      return 'bg-secondary transition-colors duration-500';
+    if (formState === 'error') {
+      return 'bg-red-secondary text-red-primary transition-colors duration-500';
     }
 
-    if (!valid) {
-      return 'bg-red-secondary text-red-primary transition-colors duration-500';
+    return 'bg-secondary transition-colors duration-500';
+  };
+
+  const conditionalButtonClassNames = () => {
+    switch (formState) {
+      case 'error':
+        return 'bg-red-primary text-red-secondary transition-colors duration-500';
+      default:
+        return 'bg-primary text-secondary transition-colors duration-500';
     }
   };
 
-  const conditionalButtonClassNames =
-    valid || input.length === 0
-      ? 'bg-primary text-secondary transition-colors duration-500'
-      : 'bg-red-primary text-red-secondary transition-colors duration-500';
-
-  const borderClassNames =
-    valid || input.length === 0
-      ? 'border-primary transition-colors duration-500'
-      : 'border-red-primary transition-colors duration-500';
+  const borderClassNames = () => {
+    switch (formState) {
+      case 'error':
+        return 'border-red-primary transition-colors duration-500';
+      default:
+        return 'border-primary transition-colors duration-500';
+    }
+  };
 
   const buttonText = () => {
     if (loading) {
       return 'signing up';
     }
-    if (valid || input.length === 0) {
-      return 'sign up';
+    if (formState === 'success') {
+      return 'Thanks';
     }
-    if (!valid) {
-      return 'invalid email';
-    }
+    return 'sign up';
   };
 
   return (
@@ -125,7 +130,7 @@ const InputComponent = () => {
         <div
           id='input-container'
           onClick={() => inputFocus()}
-          className={`flex flex-row justify-between border-4 rounded-full ${borderClassNames}`}
+          className={`flex flex-row justify-between border-4 rounded-full ${borderClassNames()}`}
         >
           <input
             id='email-input'
@@ -136,7 +141,7 @@ const InputComponent = () => {
             autoComplete='off'
           />
           <button
-            className={`px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] whitespace-nowrap ${conditionalButtonClassNames}`}
+            className={`px-4 py-1 rounded-full m-2 leading-6 tracking-[-0.03em] whitespace-nowrap ${conditionalButtonClassNames()}`}
             type='submit'
             {...(isDisabled ? { disabled: true } : { disabled: false })}
           >
