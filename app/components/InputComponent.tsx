@@ -14,7 +14,8 @@ const InputComponent = () => {
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
-    if (valid) {
+    console.log(input.length);
+    if (valid || input.length === 1) {
       setFormState('normal');
     }
   };
@@ -79,6 +80,10 @@ const InputComponent = () => {
 
     if (formState === 'error') {
       return 'bg-red-secondary text-red-primary transition-colors duration-500';
+    }
+
+    if (input.length === 0 || formState === 'normal') {
+      return 'bg-secondary transition-colors duration-500';
     }
 
     return 'bg-secondary transition-colors duration-500';
