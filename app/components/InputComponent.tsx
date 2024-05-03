@@ -1,11 +1,11 @@
 'use client';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { emailRegex } from '@/config';
 
 const InputComponent = () => {
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [input, setInput] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [formState, setFormState] = useState<'normal' | 'success' | 'error'>(
     'normal'
   );
@@ -52,12 +52,15 @@ const InputComponent = () => {
         if (response.ok) {
           setFormState('success');
         }
+        if (!response.ok) {
+          setInput('a');
+          setFormState('error');
+        }
       } catch (error) {
         console.error('error posting data: ', error);
       }
       setIsDisabled(true);
     }
-
     setLoading(false);
   };
 
@@ -90,6 +93,18 @@ const InputComponent = () => {
       ? 'border-primary transition-colors duration-500'
       : 'border-red-primary transition-colors duration-500';
 
+  const buttonText = () => {
+    if (loading) {
+      return 'signing up';
+    }
+    if (valid || input.length === 0) {
+      return 'sign up';
+    }
+    if (!valid) {
+      return 'invalid email';
+    }
+  };
+
   return (
     <form
       noValidate
@@ -113,8 +128,7 @@ const InputComponent = () => {
           <input
             id='email-input'
             placeholder='Email'
-            className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[55%] ${conditionalFormClassNames()} focus:outline-none`}
-            //ändra width på input? hitta rätt styling för width att funka med text-2xl och padding
+            className={`text-2xl placeholder-black rounded-full tracking-[-0.03em] pl-6 w-[50%] ${conditionalFormClassNames()} focus:outline-none`}
             onChange={(e) => handleInputChange(e)}
             type='email'
             autoComplete='off'
@@ -124,7 +138,7 @@ const InputComponent = () => {
             type='submit'
             {...(isDisabled ? { disabled: true } : { disabled: false })}
           >
-            {!loading ? 'sign up' : `signing up`}
+            {buttonText()}
           </button>
         </div>
       ) : (

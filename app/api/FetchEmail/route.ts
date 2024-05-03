@@ -19,7 +19,5 @@ export const POST = async (request: Request) => {
     });
   }
 
-  // const responseStatus = await response.json();
-  console.log(data, responseStatus);
   return new Response(JSON.stringify(responseStatus));
 };
